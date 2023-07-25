@@ -1,6 +1,12 @@
 from flask import Flask, render_template, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
 from wtforms import StringField, PasswordField, SubmitField
+from wtforms import FlaskForm
+from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user, current_user 
+from wtforms.validators import DataRequired, Length, ValidationError, EqualTo, Email
+from werkzeug.security import generate_password_hash, check_password_hash
+from PIL import Image
+from io import BytesIO
 from datetime import datetime
 
 app = Flask(__name__)
@@ -23,12 +29,26 @@ class Item(db.Model):
     title = db.Column(db.String(255), nullable=False)
     description = db.Column(db.Text, nullable=False)
     date_posted = db.Column(db.DateTime, default=datetime.utcnow)
+    item_img = db.Column(db.LargeBinary, nullable=False)
     user_id = db.Column(db.Integer(), db.ForeignKey('user.id'), nullable=False)
 
 # TO CREATE THE DB RUN THIS COMMAND
 #with app.app_context():
 #    db.create_all()
 
+# SIGNUP / LOGIN FORMS Objects
+class LoginForm(FlaskForm):
+    username = StringField('User', validators=[DataRequired(), Length(min=4,max=25)])
+    password = PasswordField('Password', validators=[DataRequired(),Length(min=10,max=25)])
+    submit = SubmitField('Login')
+
+class RegisterForm(FlaskForm):
+    username = StringField('User', validators=[DataRequired(), Length(min=4, max=25)])
+    password = PasswordField('Password',validators=[DataRequired(), Length(min=10, max=25)])
+    confirm_pass = PasswordField('Confirm Password', validators=[DataRequired(), EqualTo('password', message="Password Must Match")])
+    submit = SubmitField('Register')
+    
+# Routing
 # landing page
 @app.route('/')
 def index():
