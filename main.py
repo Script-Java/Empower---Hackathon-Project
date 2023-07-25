@@ -1,7 +1,6 @@
 from flask import Flask, render_template, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
-from wtforms import StringField, PasswordField, SubmitField
-from wtforms import FlaskForm
+from wtforms import StringField, PasswordField, SubmitField, FlaskForm
 from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user, current_user 
 from wtforms.validators import DataRequired, Length, ValidationError, EqualTo, Email
 from werkzeug.security import generate_password_hash, check_password_hash
