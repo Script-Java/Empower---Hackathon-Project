@@ -48,7 +48,8 @@ def token_required(f):
                 "data": None,
                 "error": str(e)
             }, 500
-        # The user is authenticated, pass it to the function
+        #Check if the user is authorized to access the resource in the keyword arguments(kwargs)
+        #If requireAdmin is present, check if the user is an admin, if not, return an error
         if "requireAdmin" in kwargs:
             if current_user.admin != kwargs["requireAdmin"]:
                 return {
@@ -56,6 +57,7 @@ def token_required(f):
                     "data": None,
                     "error": "Unauthorized"
                 }, 401
+        # The user is authenticated, pass it to the function
         return f(current_user, *args, **kwargs)
 
     return decorated
