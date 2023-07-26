@@ -1,18 +1,20 @@
-from flask import Blueprint, request
+from flask import Blueprint, request, jsonify
 from app.database import db, User
-from flask import jsonify
 from sqlalchemy.exc import IntegrityError
 from datetime import datetime, timedelta
+from werkzeug.security import generate_password_hash, check_password_hash
 import jwt
 
 auth_bp = Blueprint('auth', __name__)
 
-@auth_bp.route("/create_user", methods=["POST"])
-def create_user():
-    print("Hi")
+
+@auth_bp.route("/signup", methods=["POST"])
+def signup():
+    print("Welcome! You have been created")
     try:
         username = request.json["username"]
-        passwordHash = request.json["passwordHash"]
+        # hashing the password
+        passwordHash = generate_password_hash(request.json["passwordHash"])
         email = request.json["email"]
         user_location = request.json["user_location"]
     except KeyError:
@@ -25,7 +27,7 @@ def create_user():
     try:
         db.session.add(user)
         db.session.commit()
-        return  jsonify(usr_dict), 201
+        return jsonify(usr_dict), 201
     except IntegrityError:
         return "Username or Email already exists", 400
     except Exception as e:
@@ -35,18 +37,20 @@ def create_user():
 def login():
     user = None
     try:
-        passwordHash = request.json["passwordHash"]
-    except KeyError:
-        return "Please enter a password", 400
-    if "username" in request.json:
         username = request.json["username"]
-        user = User.query.filter_by(username = username).filter_by(passwordHash = passwordHash).first()
-    if "email" in request.json:
-        email = request.json["email"]
-        user = User.query.filter_by(email = email).filter_by(passwordHash = passwordHash).first()
-    if user == None:
-        return "Incorrect credentials", 400
+        password = request.json["password"]
+    except KeyError:
+        return jsonify({"message":"Please enter both username and password"}), 400
     
+    user = User.query.filter_by(username=username).first()
+    
+    if not user:
+        return jsonify({"message":"Incorrect User"}), 400
+    
+    if not check_password_hash(user.passwordHash, password):
+        return jsonify({"message":"Incorrect password"}), 400
+    
+    # Generate JWT token with the user information
     jwt_info = {
         "sub": user.id,
         "exp": datetime.now() + timedelta(hours=1),
@@ -56,5 +60,5 @@ def login():
         "iss": "empower.com"
     }
     jwt_token = jwt.encode(jwt_info, "secret", algorithm="HS256")
-    return jsonify({"token": jwt_token})
+    return jsonify({"token": jwt_token.decode("utf-8")})
     

@@ -1,14 +1,13 @@
 from app import db
 from datetime import datetime
 
-
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(50), unique=True, nullable=False)
     email = db.Column(db.String(), unique=True, nullable=False)
     passwordHash = db.Column(db.String(), nullable=False)
     user_location = db.Column(db.String(), nullable=False)
-    items = db.relationship('Item', backref='items', lazy=True)
+    items = db.relationship('Item', backref='author', lazy=True)
    
 class Item(db.Model):
     id = db.Column(db.Integer, primary_key=True)
