@@ -40,6 +40,7 @@ def token_required(f):
                 "message": "Token expired!",
                 "data": None,
                 "error": "Unauthorized"}, 401
+        # In case of any other error, return an error
         except Exception as e:
             
             return {
@@ -48,6 +49,13 @@ def token_required(f):
                 "error": str(e)
             }, 500
         # The user is authenticated, pass it to the function
+        if "requireAdmin" in kwargs:
+            if current_user.admin != kwargs["requireAdmin"]:
+                return {
+                    "message": "Unauthorized",
+                    "data": None,
+                    "error": "Unauthorized"
+                }, 401
         return f(current_user, *args, **kwargs)
 
     return decorated

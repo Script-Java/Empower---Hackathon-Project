@@ -4,6 +4,7 @@ from sqlalchemy.exc import IntegrityError
 from datetime import datetime, timedelta
 from werkzeug.security import generate_password_hash, check_password_hash
 import jwt
+from app import app
 
 auth_bp = Blueprint('auth', __name__)
 
@@ -11,16 +12,21 @@ auth_bp = Blueprint('auth', __name__)
 @auth_bp.route("/signup", methods=["POST"])
 def signup():
     print("Welcome! You have been created")
+    admin = False
     try:
         username = request.json["username"]
         # hashing the password
         passwordHash = generate_password_hash(request.json["passwordHash"])
         email = request.json["email"]
         user_location = request.json["user_location"]
-    except KeyError:
-        return "Incorrect JSON", 400
+        # checking if the user is admin
+        if "admin" in request.json:
+            admin = request.json["admin"] == app.config["ADMIN_SECRET"]
+    except KeyError as e:
+
+        return "Incorrect JSON" + str(e), 400
     
-    user = User(username=username, passwordHash=passwordHash, email=email, user_location=user_location)
+    user = User(username=username, passwordHash=passwordHash, email=email, user_location=user_location, admin=admin)
     usr_dict = dict(vars(user).items())
     usr_dict.pop("passwordHash")
     usr_dict.pop("_sa_instance_state")
@@ -31,7 +37,7 @@ def signup():
     except IntegrityError:
         return "Username or Email already exists", 400
     except Exception as e:
-        return f"Failed to connect to database" + str(type(e)), 500
+        return f"Failed to connect to database" + str(e), 500
 
 @auth_bp.route("/login", methods=["POST"])
 def login():

@@ -8,6 +8,7 @@ class User(db.Model):
     passwordHash = db.Column(db.String(), nullable=False)
     user_location = db.Column(db.String(), nullable=False)
     items = db.relationship('Item', backref='author', lazy=True)
+    admin = db.Column(db.Boolean, default=False)
    
 class Item(db.Model):
     id = db.Column(db.Integer, primary_key=True)
