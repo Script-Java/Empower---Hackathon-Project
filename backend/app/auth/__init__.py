@@ -18,7 +18,7 @@ def signup():
         # hashing the password
         passwordHash = generate_password_hash(request.json["passwordHash"])
         email = request.json["email"]
-        user_location = request.json["user_location"]
+        coordinates = request.json["coordinates"]
         # checking if the user is admin
         if "admin" in request.json:
             admin = request.json["admin"] == app.config["ADMIN_SECRET"]
@@ -26,7 +26,7 @@ def signup():
 
         return "Incorrect JSON" + str(e), 400
     
-    user = User(username=username, passwordHash=passwordHash, email=email, user_location=user_location, admin=admin)
+    user = User(username=username, passwordHash=passwordHash, email=email, coordinates=coordinates, admin=admin)
     usr_dict = dict(vars(user).items())
     usr_dict.pop("passwordHash")
     usr_dict.pop("_sa_instance_state")
