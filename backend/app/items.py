@@ -1,7 +1,7 @@
 from flask import Blueprint, request, jsonify
 from app.database import User,Item, db
 from app.auth.require_token import token_required
-from base64 import decode
+from base64 import urlsafe_b64decode, b64encode, decode
 from app import app
 from os import remove
 items_bp = Blueprint('items', __name__, url_prefix='/items')
@@ -9,6 +9,14 @@ items_bp = Blueprint('items', __name__, url_prefix='/items')
 # Item routes
 # All items dashboard
 # Make sure to add Auth before user can edit or add items
+@items_bp.route('/serve_img/<int:item_id>', methods=['GET', 'POST'])
+def serve_img(item_id:int):
+    print(item_id)
+    with open(f"{app.instance_path}/photos/{item_id}.jpg", "rb") as f:
+        b64_img = b64encode(f.read())
+        return jsonify({"img":b64_img.decode("utf-8")})
+    
+
 @items_bp.route('/', methods=['GET', 'POST'])
 @token_required
 def items_dash(user: User):
@@ -33,7 +41,7 @@ def add_item(user: User):
         # dont add date_posted because DB autmatically creates that field
         item_title = request.json["title"]
         description = request.json["description"]
-        item_img = decode(request.json["item_image"])
+        item_img = urlsafe_b64decode(request.json["item_image"])
         # Since the the item id:s are auto incrementing, we need to grab the last item id
         # and add 1 to it to get the new item id to link it to the image
         
@@ -56,8 +64,8 @@ def add_item(user: User):
         
         return jsonify({"message":"Item succesfully Added"}), 200
         # make sure to redirect here to item dashboard
-    except Exception:
-        return jsonify({"message":"Something went wrong"}), 500
+    except Exception as e:
+        return jsonify({"message":"Something went wrong" + str(e)}), 500
 
 # Functionality to remove items
 @items_bp.route('/delete/<int:item_id>', methods=['GET', 'POST'])
