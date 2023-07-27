@@ -10,10 +10,10 @@ app.config["ADMIN_SECRET"] = "ADMIN_SECRET_CHANGE_FOR_PRODUCTION"
 
 db = SQLAlchemy(app)
 
-from app.auth import auth_bp
+from auth import auth_bp
 app.register_blueprint(auth_bp, url_prefix='/auth')
 
-from app.items import items_bp
+from items import items_bp
 app.register_blueprint(items_bp, url_prefix='/items')
 
 @app.route('/migrate')
