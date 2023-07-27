@@ -1,5 +1,6 @@
 from flask import Blueprint, request, jsonify
 from app.database import User,Item, db
+from app.auth.require_token import token_required
 
 items_bp = Blueprint('items', __name__, url_prefix='/items')
 
@@ -7,11 +8,13 @@ items_bp = Blueprint('items', __name__, url_prefix='/items')
 # All items dashboard
 # Make sure to add Auth before user can edit or add items
 @items_bp.route('/', methods=['GET', 'POST'])
-def items_dash():
+@token_required
+def items_dash(user: User):
     # Grabbing User ID json name from auth/__init__.py file in jwt_info
     try:
         user_id = request.json['sub']
-        user_items_list = Items.query.filter_by(user_id=user_id).all()
+        user_items_list = Item.query.filter_by(user_id=user.id).all()
+        print(type(user_items_list))
         item_list = []
         # Grabbing each item in user items list
         for item in user_items_list:

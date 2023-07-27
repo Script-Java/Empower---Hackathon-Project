@@ -66,5 +66,5 @@ def login():
         "iss": "empower.com"
     }
     jwt_token = jwt.encode(jwt_info, "secret", algorithm="HS256")
-    return jsonify({"token": jwt_token.decode("utf-8")})
+    return jsonify({"token": jwt_token})
     
