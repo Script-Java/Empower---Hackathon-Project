@@ -10,33 +10,22 @@ items_bp = Blueprint('items', __name__, url_prefix='/items')
 @items_bp.route('/', methods=['GET', 'POST'])
 @token_required
 def items_dash(user: User):
-    # Grabbing User ID json name from auth/__init__.py file in jwt_info
     try:
-        user_id = request.json['sub']
-        user_items_list = Item.query.filter_by(user_id=user.id).all()
-        print(type(user_items_list))
-        item_list = []
-        # Grabbing each item in user items list
-        for item in user_items_list:
-            item_data = {
-                "id": item.id,
-                "title": item.title,
-                "description": item.description,
-                "date_posted": item.date_posted,
-                "item_img": item.item_img
-            }
-            item_list.append(item_data)
+        #The returned items will be in a list by default
+        items = Item.query.filter_by(user_id=user.id).all()
         
-        return jsonify({"user_items": item_list}), 200
-    
-    # if user cant access this
-    except AttributeError:
-        return jsonify({"message":"You are not authorized to access this"}), 400
+        # Grabbing each item in user items list
+        
+        return jsonify({"user_items": items}), 200
+    # Error handling
+    except Exception as e:
+        return jsonify({"message":"Something went wrong" + str(e)}), 500
     
 
 # Functionality to add items
 @items_bp.route('/add', methods=['GET', 'POST'])
-def add_item():
+@token_required
+def add_item(user: User):
     try:
         # here we are grabbing information and injectiong them inside DB
         # dont add date_posted because DB autmatically creates that field
@@ -61,10 +50,11 @@ def add_item():
 
 # Functionality to remove items
 @items_bp.route('/delete/<int:item_id>', methods=['GET', 'POST'])
-def delete_item():
+@token_required
+def delete_item(user:User, item_id: int):
      # Grabbing User ID json name(sub) from auth/__init__.py file in jwt_info
     try:
-        user_id = request.json['sub']
+        user_id = user.id
         item = Item.query.get(item_id)
     
         if not item:
@@ -84,10 +74,11 @@ def delete_item():
 
 # Functionality to update items
 @items_bp.route('/edit/<int:item_id>', methods=['GET', 'POST'])
-def edit_item():
+@token_required
+def edit_item(user: User, item_id: int):
     try:
         # Grabbing User ID json name(sub) from auth/__init__.py file in jwt_info
-        user_id = request.json['sub']
+        user_id = user.id
         item = Item.query.get(item_id)
         
         if not item:

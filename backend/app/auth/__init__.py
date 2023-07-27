@@ -59,12 +59,12 @@ def login():
     # Generate JWT token with the user information
     jwt_info = {
         "sub": user.id,
-        "exp": datetime.now() + timedelta(hours=1),
-        "nbf": datetime.now(),
-        "iat": datetime.now(),
+        "exp": datetime.utcnow() + timedelta(hours=1),
+        "nbf": datetime.utcnow(),
+        "iat": datetime.utcnow(),
         "usr_name": user.username,
         "iss": "empower.com"
     }
-    jwt_token = jwt.encode(jwt_info, "secret", algorithm="HS256")
+    jwt_token = jwt.encode(jwt_info, app.config["SECRET_KEY"], algorithm="HS256")
     return jsonify({"token": jwt_token})
     
