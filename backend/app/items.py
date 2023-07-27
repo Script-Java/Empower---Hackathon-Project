@@ -1,7 +1,9 @@
 from flask import Blueprint, request, jsonify
 from app.database import User,Item, db
 from app.auth.require_token import token_required
-
+from base64 import decode
+from app import app
+from os import remove
 items_bp = Blueprint('items', __name__, url_prefix='/items')
 
 # Item routes
@@ -31,17 +33,26 @@ def add_item(user: User):
         # dont add date_posted because DB autmatically creates that field
         item_title = request.json["title"]
         description = request.json["description"]
-        item_img = request.json["item_image"]
+        item_img = decode(request.json["item_image"])
+        # Since the the item id:s are auto incrementing, we need to grab the last item id
+        # and add 1 to it to get the new item id to link it to the image
+        
+        last_item_id = 0
+        if Item.query.order_by(Item.id.desc()).first() != None:
+            last_item_id = Item.query.order_by(Item.id.desc()).first().id
+        img_path = f"{app.instance_path}/photos/{last_item_id+1}.jpg"
         # Grabbing User ID json name(sub) from auth/__init__.py file in jwt_info
-        user_id = request.json['sub']
+        user_id = user.id
         
         new_item = Item(title=item_title,
                         description=description,
-                        item_img=item_img,
+                        img_path=img_path,
                         user_id=user_id)
         
         db.session.add(new_item)
         db.session.commit()
+        with open(img_path, "wb") as f:
+            f.write(item_img)
         
         return jsonify({"message":"Item succesfully Added"}), 200
         # make sure to redirect here to item dashboard
@@ -66,6 +77,8 @@ def delete_item(user:User, item_id: int):
         db.session.delete(item)
         db.session.commit()
 
+        # Delete the image from the serve
+        remove(item.img_path)
         return jsonify({"message":"Item deleted succesfully"}), 200
 
     except Exception:
