@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify
-from .database import db, User
+from app.database import db, User
 from sqlalchemy.exc import IntegrityError
 from datetime import datetime, timedelta
 from werkzeug.security import generate_password_hash, check_password_hash

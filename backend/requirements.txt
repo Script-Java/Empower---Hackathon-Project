@@ -1,5 +1,0 @@
-flask
-flask_sqlalchemy
-wtforms
-flask_login
-pillow

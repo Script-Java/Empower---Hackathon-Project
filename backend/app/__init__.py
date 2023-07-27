@@ -11,18 +11,14 @@ app.config["ADMIN_SECRET"] = "ADMIN_SECRET_CHANGE_FOR_PRODUCTION"
 
 db = SQLAlchemy(app)
 
-<<<<<<< HEAD
-from auth import auth_bp
-=======
 # Photos will be stored alongside the db.sqlite in the instance folder
 if not path.exists(app.instance_path + '/photos'):
     makedirs(app.instance_path + '/photos')
 
 from app.auth import auth_bp
->>>>>>> 49ff30c65da4a542b8dd043e282ba017bcbc8ce6
 app.register_blueprint(auth_bp, url_prefix='/auth')
 
-from items import items_bp
+from .items import items_bp
 app.register_blueprint(items_bp, url_prefix='/items')
 
 @app.route('/migrate')
