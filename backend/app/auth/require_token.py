@@ -2,8 +2,8 @@ from functools import wraps
 import jwt
 from flask import request
 from datetime import datetime
-from app.database import User
-from app import app
+from database import User
+from main import app
 
 #This is to be used as a function decorator on resources locked for authentication
 #It requires a token in the header of the request, and the api endpoint function must have a user as one of the function parameters

@@ -1,0 +1,7 @@
+version: '1'
+
+services:
+  backend:
+    image: enalindstrom/gnec2023_hackathon:latest
+    ports:
+      - "80:80"

@@ -1,8 +1,8 @@
 from flask import Blueprint, request, jsonify
-from app.database import User,Item, db
-from app.auth.require_token import token_required
+from database import User,Item, db
+from auth.require_token import token_required
 from base64 import urlsafe_b64decode, b64encode, decode
-from app import app
+from main import app
 from os import remove
 from geopy.distance import geodesic
 items_bp = Blueprint('items', __name__, url_prefix='/items')

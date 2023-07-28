@@ -1,10 +1,10 @@
 from flask import Blueprint, request, jsonify
-from app.database import db, User
+from database import db, User
 from sqlalchemy.exc import IntegrityError
 from datetime import datetime, timedelta
 from werkzeug.security import generate_password_hash, check_password_hash
 import jwt
-from app import app
+from main import app
 
 auth_bp = Blueprint('auth', __name__)
 

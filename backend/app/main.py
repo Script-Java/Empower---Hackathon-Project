@@ -15,10 +15,10 @@ db = SQLAlchemy(app)
 if not path.exists(app.instance_path + '/photos'):
     makedirs(app.instance_path + '/photos')
 
-from app.auth import auth_bp
+from auth import auth_bp
 app.register_blueprint(auth_bp, url_prefix='/auth')
 
-from .items import items_bp
+from items import items_bp
 app.register_blueprint(items_bp, url_prefix='/items')
 
 @app.route('/migrate')

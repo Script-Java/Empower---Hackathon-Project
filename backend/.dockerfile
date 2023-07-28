@@ -1,4 +1,29 @@
-FROM icr.io/ibmz/uwsgi-nginx-flask@sha256:a2a4ddb4a10e4b1ac16e9da41ce715177ca3ac26866d73e420190462907cc907
-COPY requirements.txt requirements.txt
-RUN pip3 install -r requirements.txt
+FROM tiangolo/uwsgi-nginx:python3.11
+
+LABEL maintainer="Sebastian Ramirez <tiangolo@gmail.com>"
+
+COPY requirements.txt /tmp/requirements.txt
+
+RUN pip install --no-cache-dir -r /tmp/requirements.txt
+
+ENV STATIC_URL /static
+
+ENV STATIC_PATH /app/static
+
+ENV STATIC_INDEX 0
+
 COPY ./app /app
+
+WORKDIR /app
+
+ENV PYTHONPATH=/app
+
+RUN mv /entrypoint.sh /uwsgi-nginx-entrypoint.sh
+
+COPY entrypoint.sh /entrypoint.sh
+
+RUN chmod +x /entrypoint.sh
+
+ENTRYPOINT ["/entrypoint.sh"]
+
+CMD ["/start.sh"]
