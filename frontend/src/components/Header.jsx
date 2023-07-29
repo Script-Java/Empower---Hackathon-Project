@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import img2 from "../assets/empower.png";
 import {
   Drawer,
@@ -14,60 +14,52 @@ import {
 } from "@chakra-ui/react";
 import { Link } from "react-router-dom";
 import { BiMenuAltLeft } from "react-icons/bi";
+import {SideBarNotLoggedIn} from "./sidebar/NotLoggedIn"
+import {SideBarLoggedIn} from "./sidebar/LoggedIn"
 const Header = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const [loggedIn, setLoggedIn] = useState(false)
+  function decodeJwt(token){
+    try {
+      return JSON.parse(atob(token.split('.')[1]))
+    } catch (error) {
+      return undefined
+    }
+  }
 
-  return (
-    <>
-      <Button
-        pos={"fixed"}
-        top={"4"}
-        left={"4"}
-        colorScheme="green"
-        p={"0"}
-        w={"10"}
-        h={"10"}
-        zIndex={"overlay"}
-        borderRadius={"full"}
-        onClick={onOpen}
-      >
-        <BiMenuAltLeft size={"20"} />
-      </Button>
-      <Drawer isOpen={isOpen} onClose={onClose} placement="left">
-        <DrawerOverlay />
-        <DrawerContent>
-          <DrawerCloseButton />
-          <DrawerHeader>
-            <img src={img2} alt="" />
-          </DrawerHeader>
-          <DrawerBody>
-            <VStack alignItems={"flex-start"}>
-              <Button onClick={onClose} variant={"ghost"} colorScheme="green">
-                <Link to="/">Home</Link>
-              </Button>
-              <Button onClick={onClose} variant={"ghost"} colorScheme="green">
-                <Link to="/about">About</Link>
-              </Button>
-            </VStack>
-            <HStack
-              pos={"absolute"}
-              bottom={"10"}
-              right={"0"}
-              w={"full"}
-              justifyContent={"space-evenly"}
-            >
-              <Button onClick={onClose} colorScheme="green">
-                <Link to={"/login"}>Login</Link>
-              </Button>
-              <Button onClick={onClose} colorScheme="green" variant={"outline"}>
-                <Link to={"/signup"}>SignUp</Link>
-              </Button>
-            </HStack>
-          </DrawerBody>
-        </DrawerContent>
-      </Drawer>
-    </>
-  );
+  useEffect(() => {
+    console.log("hi")
+    try{
+      const token = localStorage.getItem("token")
+      if (token){
+        const info = decodeJwt(token)
+        console.log(info)
+        const exp = new Date(info["exp"] * 1000)
+        const nbf = new Date(info["nbf"] * 1000)
+        const date = new Date()
+        if (date > exp || date < nbf){
+          localStorage.removeItem("token")
+          setLoggedIn(false)
+        }
+        else{
+          setLoggedIn(true)
+        }
+        
+      }
+      else{
+        localStorage.removeItem("token")
+        setLoggedIn(false)
+      }
+    }
+    catch(err){
+      
+      localStorage.removeItem("token")
+      setLoggedIn(false)
+      console.log(err)
+    }
+  }, [isOpen])
+
+  return (loggedIn ? SideBarLoggedIn(isOpen, onOpen, onClose) : SideBarNotLoggedIn(isOpen, onOpen, onClose));
 };
 
 export default Header;
