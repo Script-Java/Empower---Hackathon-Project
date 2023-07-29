@@ -59,7 +59,7 @@ export const SideBarNotLoggedIn = (isOpen, onOpen, onClose) => {
                 <Link to={"/login"}>Login</Link>
               </Button>
               <Button onClick={onClose} colorScheme="green" variant={"outline"}>
-                <Link to={"/signup"}>SignUp</Link>
+                <Link to={"/signup"}>Sign Up</Link>
               </Button>
             </HStack>
           </DrawerBody>

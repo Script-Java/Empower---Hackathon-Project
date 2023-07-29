@@ -4,12 +4,16 @@ from flask import request
 from datetime import datetime
 from database import User
 from main import app
+from flask_headers import headers
 
 #This is to be used as a function decorator on resources locked for authentication
 #It requires a token in the header of the request, and the api endpoint function must have a user as one of the function parameters
 #This user will be a User object that is fetched from the database using the token
 
-def token_required(f):
+
+
+
+def token_required_unwrapped(f):
     @wraps(f)
     def decorated(*args, **kwargs):
         token = None
@@ -61,3 +65,6 @@ def token_required(f):
         return f(current_user, *args, **kwargs)
 
     return decorated
+
+def token_required(f):
+    return headers({"Access-Control-Allow-Headers" : "Authorization"})(token_required_unwrapped(f))

@@ -21,7 +21,6 @@ const Login = () => {
   async function handleSubmit(e) {
     e.preventDefault()
     const backendBaseUrl = import.meta.env.VITE_BACKEND_BASE_URL
-    console.log(backendBaseUrl)
     const response = await fetch(backendBaseUrl + "auth/login", {
         "method": "POST",
         headers: {

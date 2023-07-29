@@ -10,7 +10,7 @@ items_bp = Blueprint('items', __name__, url_prefix='/items')
 # Item routes
 # All items dashboard
 # Make sure to add Auth before user can edit or add items
-@items_bp.route('/serve_img/<int:item_id>', methods=['GET', 'POST'])
+@items_bp.route('/serve_img/<int:item_id>')
 def serve_img(item_id:int):
     print(item_id)
     with open(f"{app.instance_path}/photos/{item_id}.jpg", "rb") as f:
@@ -18,7 +18,7 @@ def serve_img(item_id:int):
         return jsonify({"img":b64_img.decode("utf-8")})
     
 #Retrive all my items
-@items_bp.route('/my', methods=['GET', 'POST'])
+@items_bp.route('/my')
 @token_required
 def items_dash(user: User):
     try:
@@ -34,7 +34,7 @@ def items_dash(user: User):
     
 
 # Functionality to add items
-@items_bp.route('/add', methods=['POST'])
+@items_bp.route('/add')
 @token_required
 def add_item(user: User):
     try:
@@ -71,7 +71,7 @@ def add_item(user: User):
         return jsonify({"message":"Something went wrong" + str(e)}), 500
 
 # Functionality to remove items
-@items_bp.route('/delete/<int:item_id>', methods=["DELETE"])
+@items_bp.route('/delete/<int:item_id>')
 @token_required
 def delete_item(user:User, item_id: int):
      # Grabbing User ID json name(sub) from auth/__init__.py file in jwt_info
@@ -97,7 +97,7 @@ def delete_item(user:User, item_id: int):
     
 
 # Functionality to update items
-@items_bp.route('/edit/<int:item_id>', methods=["PUT", "PATCH"])
+@items_bp.route('/edit/<int:item_id>')
 @token_required
 def edit_item(user: User, item_id: int):
     try:
@@ -129,11 +129,11 @@ def edit_item(user: User, item_id: int):
         return jsonify({"message":"Something went wrong"}), 500
 
         
-@items_bp.route('/filter', methods=['GET'])
+@items_bp.route('/filter')
 @token_required
 def filter_items(user: User):
     #Gets the user coordinates from a tuple string in the db passed by the token_required decorator
-    user_coord = tuple(map(float, user.coordinates.split(', ')))
+    user_coord = tuple(map(float, user.coordinates.replace("(", "").replace(")", "").replace(" ", "").split(',')))
     #Gets the user max_distance from the db passed by the token_required decorator
     user_max_distance = user.max_distance
     acceptableItems = []
