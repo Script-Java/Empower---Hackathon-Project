@@ -3,3 +3,4 @@ flask_sqlalchemy
 geopy
 pyjwt
 flask-cors
+flask-headers

@@ -1,21 +1,11 @@
 import React, { useEffect, useState } from "react";
-import img2 from "../assets/empower.png";
+
 import {
-  Drawer,
-  DrawerBody,
-  DrawerHeader,
-  DrawerOverlay,
-  DrawerContent,
-  DrawerCloseButton,
-  Button,
-  useDisclosure,
-  VStack,
-  HStack,
+  useDisclosure
 } from "@chakra-ui/react";
-import { Link } from "react-router-dom";
-import { BiMenuAltLeft } from "react-icons/bi";
 import {SideBarNotLoggedIn} from "./sidebar/NotLoggedIn"
 import {SideBarLoggedIn} from "./sidebar/LoggedIn"
+
 const Header = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [loggedIn, setLoggedIn] = useState(false)
