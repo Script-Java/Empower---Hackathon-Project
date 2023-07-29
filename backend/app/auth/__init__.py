@@ -8,6 +8,17 @@ from main import app
 
 auth_bp = Blueprint('auth', __name__)
 
+def createJwt(user: User):
+    jwt_info = {
+        "sub": user.id,
+        "exp": datetime.utcnow() + timedelta(hours=1),
+        "nbf": datetime.utcnow(),
+        "iat": datetime.utcnow(),
+        "usr_name": user.username,
+        "iss": "empower.com"
+    }
+    jwt_token = jwt.encode(jwt_info, app.config["SECRET_KEY"], algorithm="HS256")
+    return jwt_token
 
 @auth_bp.route("/signup", methods=["POST"])
 def signup():
@@ -34,6 +45,7 @@ def signup():
     try:
         db.session.add(user)
         db.session.commit()
+        usr_dict["token"] = createJwt(user)
         return jsonify(usr_dict), 201
     except IntegrityError as e:
         return "Username or Email already exists" + str(e), 400
@@ -61,14 +73,6 @@ def login():
         return jsonify({"message":"Incorrect password"}), 400
     
     # Generate JWT token with the user information
-    jwt_info = {
-        "sub": user.id,
-        "exp": datetime.utcnow() + timedelta(hours=1),
-        "nbf": datetime.utcnow(),
-        "iat": datetime.utcnow(),
-        "usr_name": user.username,
-        "iss": "empower.com"
-    }
-    jwt_token = jwt.encode(jwt_info, app.config["SECRET_KEY"], algorithm="HS256")
-    return jsonify({"token": jwt_token})
+    
+    return jsonify({"token": createJwt(user)})
     

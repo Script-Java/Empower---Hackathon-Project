@@ -11,6 +11,7 @@ app.config['SECRET_KEY'] = 'SECRET_KEY_CHANGE_FOR_PRODUCTION'
 app.config["ADMIN_SECRET"] = "ADMIN_SECRET_CHANGE_FOR_PRODUCTION"
 
 
+
 db = SQLAlchemy(app)
 
 # Photos will be stored alongside the db.sqlite in the instance folder
@@ -32,6 +33,6 @@ def migrate():
     makedirs(app.instance_path + '/photos')
     
     return 'Migration complete', 200
-
+migrate()
 if __name__ == '__main__':
     app.run(debug=True)

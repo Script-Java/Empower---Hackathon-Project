@@ -4,9 +4,16 @@ LABEL maintainer="Sebastian Ramirez <tiangolo@gmail.com>"
 
 COPY requirements.txt /tmp/requirements.txt
 
+
+#get sudo on the container
 RUN apt-get update && \
       apt-get -y install sudo
 
+#install sqlite3 to be able to 
+#docker exec -it empower---hackathon-project-backend-1 /bin/bash
+#into the machine and navigate to the /app/instance folder to run
+#sqlite3 db.sqlite
+#and run queries against the db directly for debuggin purposes 
 RUN sudo apt install sqlite3
 
 RUN pip install --no-cache-dir -r /tmp/requirements.txt
