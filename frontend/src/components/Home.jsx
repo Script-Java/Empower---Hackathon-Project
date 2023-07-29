@@ -39,7 +39,17 @@ const Home = () => {
           fontSize="4xl"
           color={"green"}
         >
-          Sharing smiles, Brightening lives
+           Connecting Kindness, Sharing Hope
+        </Text>
+        <Text 
+          marginTop={"10rem"}
+          fontSize="2xl"
+          color={"#CA054D"}
+          textAlign={"center"}
+        >
+          Welcome to Empower: Bridging Generosity, Uplifting Lives! <br/>
+A Compassionate Online Community, Where Giving is Caring. <br/>
+Share Your Blessings, Empower the Less Fortunate Today!
         </Text>
       </Flex>
     </Box>

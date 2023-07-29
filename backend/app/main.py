@@ -2,7 +2,9 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from os import makedirs, path
 from shutil import rmtree
+from flask_cors import CORS
 app = Flask(__name__)
+CORS(app)
 app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///db.sqlite"
 app.config['SQLALCHEMY_TRACK_MODIFICATION'] = False
 app.config['SECRET_KEY'] = 'SECRET_KEY_CHANGE_FOR_PRODUCTION'

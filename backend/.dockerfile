@@ -4,6 +4,11 @@ LABEL maintainer="Sebastian Ramirez <tiangolo@gmail.com>"
 
 COPY requirements.txt /tmp/requirements.txt
 
+RUN apt-get update && \
+      apt-get -y install sudo
+
+RUN sudo apt install sqlite3
+
 RUN pip install --no-cache-dir -r /tmp/requirements.txt
 
 ENV STATIC_URL /static

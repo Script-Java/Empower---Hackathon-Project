@@ -19,6 +19,7 @@ def signup():
         passwordHash = generate_password_hash(request.json["passwordHash"])
         email = request.json["email"]
         coordinates = request.json["coordinates"]
+        max_distance = request.json["max_distance"]
         # checking if the user is admin
         if "admin" in request.json:
             admin = request.json["admin"] == app.config["ADMIN_SECRET"]
@@ -26,7 +27,7 @@ def signup():
 
         return "Incorrect JSON" + str(e), 400
     
-    user = User(username=username, passwordHash=passwordHash, email=email, coordinates=coordinates, admin=admin)
+    user = User(username=username, passwordHash=passwordHash, email=email, coordinates=coordinates, max_distance=max_distance, admin=admin)
     usr_dict = dict(vars(user).items())
     usr_dict.pop("passwordHash")
     usr_dict.pop("_sa_instance_state")
@@ -34,8 +35,8 @@ def signup():
         db.session.add(user)
         db.session.commit()
         return jsonify(usr_dict), 201
-    except IntegrityError:
-        return "Username or Email already exists", 400
+    except IntegrityError as e:
+        return "Username or Email already exists" + str(e), 400
     except Exception as e:
         return f"Failed to connect to database" + str(e), 500
 
@@ -43,12 +44,15 @@ def signup():
 def login():
     user = None
     try:
-        username = request.json["username"]
-        password = request.json["password"]
+        username = request.json.get("username")
+        password = request.json.get("password")
+        email = request.json.get("email")
     except KeyError:
         return jsonify({"message":"Please enter both username and password"}), 400
-    
-    user = User.query.filter_by(username=username).first()
+    if username:
+        user = User.query.filter_by(username=username).first()
+    elif email:
+        user = User.query.filter_by(email=email).first()
     
     if not user:
         return jsonify({"message":"Incorrect User"}), 400
