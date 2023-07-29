@@ -10,19 +10,19 @@ app.config['SQLALCHEMY_TRACK_MODIFICATION'] = False
 app.config['SECRET_KEY'] = 'SECRET_KEY_CHANGE_FOR_PRODUCTION'
 app.config["ADMIN_SECRET"] = "ADMIN_SECRET_CHANGE_FOR_PRODUCTION"
 
-
-
 db = SQLAlchemy(app)
 
 # Photos will be stored alongside the db.sqlite in the instance folder
 if not path.exists(app.instance_path + '/photos'):
     makedirs(app.instance_path + '/photos')
 
-from auth import auth_bp
-app.register_blueprint(auth_bp, url_prefix='/auth')
+def import_register():
+    from auth import auth_bp
+    app.register_blueprint(auth_bp, url_prefix='/auth')
 
-from items import items_bp
-app.register_blueprint(items_bp, url_prefix='/items')
+    from items import items_bp
+    app.register_blueprint(items_bp, url_prefix='/items')
+
 
 @app.route('/migrate')
 def migrate():
@@ -33,6 +33,9 @@ def migrate():
     makedirs(app.instance_path + '/photos')
     
     return 'Migration complete', 200
+
 migrate()
+
 if __name__ == '__main__':
+    import_register()
     app.run(debug=True)
