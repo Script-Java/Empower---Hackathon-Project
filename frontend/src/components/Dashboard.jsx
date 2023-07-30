@@ -9,11 +9,15 @@ const Dashboard = () => {
         const response = await fetch(backendBaseUrl + "items/filter", {mode: "cors", headers:{
           "Authorization": "Bearer " + localStorage.getItem("token")
         }})
-        if (!response.ok) {
+        const json = await response.json()
+        if (response.status == 401 || response.status == 403) {
             navigate("/login")
         }
+        else if (!response.ok){
+          alert("Something went wrong" + JSON.stringify(json))
+        }
         try{
-          const items = await response.json()
+          const items = json
           setItems(items)
           console.log(items)
         }
