@@ -10,10 +10,12 @@ import {
 } from "@chakra-ui/react";
 import font from "../styles/font.css";
 import img1 from "../assets/1_image.png";
+import img2 from "../assets/empower.png";
+import img3 from "../assets/earth_3.svg";
 const Home = () => {
   return (
     <Box
-      bgImage={img1}
+      bgImage={img3}
       bgSize="cover"
       bgPosition="center"
       bgRepeat="no-repeat"
@@ -21,30 +23,39 @@ const Home = () => {
       display="flex"
       alignItems="center"
       justifyContent="center"
+      color={"white"}
+      minH={"100vh"}
     >
       <Flex
-        h="90"
+        // h="90"
         align="center"
         justify="center"
         direction="column"
-        marginTop={"-17rem"}
+        padding={"4rem"}
         fontFamily={font}
+        borderRadius={"1rem"}
+        backdropFilter={"blur(10px)"}
       >
-        <Heading size="4xl" color="#458862" fontFamily={font} opacity={"1.1"}>
+        <Heading size="4xl" color="#75eb75" fontFamily={font} opacity={"1.1"}>
           Empower
         </Heading>
+        {/* <img src={img2} alt="" /> */}
         <Text
-          paddingTop={"3rem"}
+          // paddingTop={"3rem"}
+          margin={"1rem"}
           fontWeight="bold"
           fontSize="4xl"
-          color={"green"}
+          color={"lightgreen"}
+          padding={"1rem"}
+          textAlign={"center"}
         >
            Connecting Kindness, Sharing Hope
         </Text>
         <Text 
-          marginTop={"10rem"}
+          // marginTop={"3rem"}
           fontSize="2xl"
-          color={"#CA054D"}
+          // color={"#CA054D"}
+          color={"lightgreen"}
           textAlign={"center"}
         >
           Welcome to Empower: Bridging Generosity, Uplifting Lives! <br/>
