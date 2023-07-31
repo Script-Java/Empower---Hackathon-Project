@@ -45,12 +45,12 @@ def claim_item(item_id):
 
         
 # Make sure to add Auth before user can edit or add items
-@items_bp.route('/serve_img/<int:item_id>')
-def serve_img(item_id:int):
-    print(item_id)
-    with open(f"{app.instance_path}/photos/{item_id}.jpg", "rb") as f:
-        b64_img = b64encode(f.read())
-        return jsonify({"img":b64_img.decode("utf-8")})
+@items_bp.route('/serve_img')
+def serve_img():
+    img_path = request.json["img_path"]
+    with open(img_path, "rb") as f:
+        dURL = construct_data_url(f.read())
+        return jsonify({"img":dURL})
     
 #Retrive all my items
 @items_bp.route('/my')
@@ -77,6 +77,7 @@ def add_item(user: User):
         # dont add date_posted because DB autmatically creates that field
         item_title = request.json["title"]
         description = request.json["description"]
+        
         item_img_url = ""
         try:
             raw_b64 = request.json["item_image"]
@@ -100,7 +101,6 @@ def add_item(user: User):
             img_path = f"{app.instance_path}/photos/{last_item_id+1}.png"
         # Grabbing User ID json name(sub) from auth/__init__.py file in jwt_info
         user_id = user.id
-        print(item_img_url.data)
         new_item = Item(title=item_title,
                         description=description,
                         img_path=img_path,
@@ -177,6 +177,15 @@ def edit_item(user: User, item_id: int):
     except Exception:
         return jsonify({"message":"Something went wrong"}), 500
 
+def itemToDict(item: Item):
+    return {
+        "id": item.id,
+        "title": item.title,
+        "description": item.description,
+        "img_path": item.img_path,
+        "user_id": item.user_id,
+        "coordinates": item.coordinates
+    }
         
 @items_bp.route('/filter')
 @token_required
@@ -185,12 +194,28 @@ def filter_items(user: User):
     user_coord = tuple(map(float, user.coordinates.replace("(", "").replace(")", "").replace(" ", "").split(',')))
     #Gets the user max_distance from the db passed by the token_required decorator
     user_max_distance = user.max_distance
+    with_images = request.args.get('with_images')
     acceptableItems = []
     for item in Item.query.all():
         #Calculates the distance between the user and the item using geodesic function from geopy library
         #If the distance is less than the user max_distance, then append the item to the list of acceptable items
         #If the distance is greater than the user max_distance, then skip the item and continue to the next item
-        item_coord = tuple(map(float, item.coordinates.split(', ')))
+        item_coord = tuple(map(float, item.coordinates.replace("(", "").replace(")", "").replace(" ", "").split(',')))
         if geodesic(user_coord, item_coord).km <= user_max_distance:
-            acceptableItems.append(item)
+            acceptableItems.append(itemToDict(item))
+        if with_images:
+            for item in acceptableItems:
+                with open(item["img_path"], "rb") as f:
+                    mime_type = ""
+                    if item["img_path"].endswith(".jpg"):
+                        mime_type = "image/jpeg"
+                    else:
+                        mime_type = "image/png"
+                    dURL = construct_data_url(
+                        data=f.read(),
+                        base64_encode=True,
+                        mime_type=mime_type
+                    )
+                    item["img"] = dURL
+        
     return jsonify({"items":acceptableItems}), 200

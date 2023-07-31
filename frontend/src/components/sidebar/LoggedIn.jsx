@@ -56,6 +56,9 @@ export const SideBarLoggedIn = (isOpen, onOpen, onClose) => {
               <Button onClick={onClose} variant={"ghost"} colorScheme="green">
                 <Link to="/dashboard">Dashboard</Link>
               </Button>
+              <Button onClick={onClose} variant={"ghost"} colorScheme="green">
+                <Link to="/create">Create</Link>
+              </Button>
               <HStack
               pos={"absolute"}
               bottom={"10"}
