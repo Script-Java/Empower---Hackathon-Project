@@ -10,6 +10,40 @@ items_bp = Blueprint('items', __name__, url_prefix='/items')
 
 # Item routes
 # All items dashboard
+@items_bp.route('/item_dashboard')
+def items_dash():
+    # fitering all items that are not claimed
+    items = Item.query.filter_by(claimed=False).all()
+    item_data = []
+    # turning all items into a dict and appending them
+    for item in items:
+        item_data.append({
+            'id': item.id,
+            'name': item.name,
+            'description': item.description,
+            'claimed': item.claimed,
+            'user_id': item.user_id
+        })
+    return jsonify({"all_items": item_data}), 200
+
+# add auth before this
+@items_bp.route('/claim/<int:item_id>', methods=['POST'])
+def claim_item(item_id):
+    item = Item.query.get(item_id)
+    
+    if not item:
+        return jsonify({"error":"Item does not exist"}), 400
+    
+    if item.claimed:
+        return jsonify({"error":"Item already claimed"}), 400
+
+    item.claimed = True
+    item.user_id = user.id
+    db.session.commit()
+    
+    return jsonify({"message":"You have successfully claimed this item"}), 200
+
+        
 # Make sure to add Auth before user can edit or add items
 @items_bp.route('/serve_img/<int:item_id>')
 def serve_img(item_id:int):

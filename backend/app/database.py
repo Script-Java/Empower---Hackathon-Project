@@ -20,4 +20,5 @@ class Item(db.Model):
     date_posted = db.Column(db.DateTime, default=datetime.utcnow)
     coordinates = db.Column(db.String(), nullable=False)
     img_path = db.Column(db.String(255), nullable=False)
+    claimed = db.Column(db.Boolean, default=False)
     user_id = db.Column(db.Integer(), db.ForeignKey('user.id'), nullable=False)
