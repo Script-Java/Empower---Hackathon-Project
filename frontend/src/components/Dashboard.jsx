@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {Item} from "./Item"
-import { Grid, GridItem } from '@chakra-ui/react';
+import { Button, Flex, Grid, Heading, Text, Link } from '@chakra-ui/react';
+import font from "../styles/font.css";
 const Dashboard = () => {
 
     const [items, setItems] = useState([{title:""}])
@@ -33,6 +34,18 @@ const Dashboard = () => {
         getItems()
     }, [])
 
+    if(loaded && items.length == 0){
+      return <Flex justifyContent={"center"} alignItems={"center"} height={"100vh"} w={"100vw"} flexDir={"column"} gap={"10vh"}>
+        <Heading size="4xl" color="green.400" fontFamily={font}>
+          No Items Found
+        </Heading>
+        <Link href="/create">
+          <Button marginTop={"1rem"} colorScheme={"green"} h={"10rem"} fontSize={"5rem"} borderRadius={"1rem"}>
+            Add Some
+          </Button>
+        </Link>
+      </Flex>
+    }
     return (
     <>
       <Grid templateColumns={{ base: 'repeat(1, 1fr)', 
@@ -51,7 +64,11 @@ const Dashboard = () => {
           return (
               <Item item={item} key={item.id}/>
           )
-        }) : <p>Loading...</p>}
+        }) : <Flex justifyContent={"center"} alignItems={"center"} height={"90vh"} w={"90vw"} flexDir={"column"}>
+        <Heading size="4xl" color="green.400" fontFamily={font}>
+          Loading ...
+        </Heading>
+      </Flex>}
       </Grid>
     </>
   )

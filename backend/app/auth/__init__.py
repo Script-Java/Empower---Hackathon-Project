@@ -4,7 +4,7 @@ from sqlalchemy.exc import IntegrityError
 from datetime import datetime, timedelta
 from werkzeug.security import generate_password_hash, check_password_hash
 import jwt
-from main import app
+from app import app
 
 auth_bp = Blueprint('auth', __name__)
 
@@ -20,8 +20,15 @@ def createJwt(user: User):
     jwt_token = jwt.encode(jwt_info, app.config["SECRET_KEY"], algorithm="HS256")
     return jwt_token
 
-@auth_bp.route("/signup", methods=["POST"])
+@auth_bp.route("/signup", methods=["POST", "OPTIONS"])
 def signup():
+    if request.method == "OPTIONS":
+        response = jsonify({'success': True})
+        response.headers.add('Access-Control-Allow-Methods', 'POST')
+        response.headers.add('Access-Control-Allow-Headers', 'Content-Type')
+        response.headers.add('Access-Control-Max-Age', '86400')
+        print("hello")
+        return response, 200
     print("Welcome! You have been created")
     admin = False
     try:
@@ -46,7 +53,7 @@ def signup():
         db.session.add(user)
         db.session.commit()
         usr_dict["token"] = createJwt(user)
-        return jsonify(usr_dict), 201
+        return jsonify(usr_dict), 200
     except IntegrityError as e:
         return "Username or Email already exists" + str(e), 400
     except Exception as e:

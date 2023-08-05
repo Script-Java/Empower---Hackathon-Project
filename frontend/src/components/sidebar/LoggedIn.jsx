@@ -14,6 +14,7 @@ import {
 } from "@chakra-ui/react";
 import { Link } from "react-router-dom";
 import { BiMenuAltLeft } from "react-icons/bi";
+import pdf from "./../../assets/Empower_Business_Plan.pdf"
 export const SideBarLoggedIn = (isOpen, onOpen, onClose) => {
 //   const { isOpen, onOpen, onClose } = useDisclosure();
 
@@ -47,18 +48,26 @@ export const SideBarLoggedIn = (isOpen, onOpen, onClose) => {
           </DrawerHeader>
           <DrawerBody>
             <VStack alignItems={"flex-start"}>
+            <Link to="/">
+                <Button onClick={onClose} variant={"ghost"} colorScheme="green">
+                  Home
+                </Button>
+              </Link>
+              <Link to={pdf} target="_blank">
+                <Button onClick={onClose} variant={"ghost"} colorScheme="green">
+                  About
+                </Button>
+              </Link>
+              <Link to="/dashboard">
               <Button onClick={onClose} variant={"ghost"} colorScheme="green">
-                <Link to="/">Home</Link>
+                Dashboard
               </Button>
-              <Button onClick={onClose} variant={"ghost"} colorScheme="green">
-                <Link to="/about">About</Link>
-              </Button>
-              <Button onClick={onClose} variant={"ghost"} colorScheme="green">
-                <Link to="/dashboard">Dashboard</Link>
-              </Button>
-              <Button onClick={onClose} variant={"ghost"} colorScheme="green">
-                <Link to="/create">Create</Link>
-              </Button>
+              </Link>
+              <Link to="/create">
+                <Button onClick={onClose} variant={"ghost"} colorScheme="green">
+                  Create
+                </Button>
+              </Link>
               <HStack
               pos={"absolute"}
               bottom={"10"}
@@ -66,10 +75,11 @@ export const SideBarLoggedIn = (isOpen, onOpen, onClose) => {
               w={"full"}
               justifyContent={"space-evenly"}
             >
-              
-              <Button onClick={logout} colorScheme="green" variant={"outline"}>
-                <Link to={"/"}>Log Out</Link>
-              </Button>
+              <Link to={"/"}>
+                <Button onClick={logout} colorScheme="green" variant={"outline"}>
+                  Log Out
+                </Button>
+              </Link>
             </HStack>
             </VStack>
           </DrawerBody>

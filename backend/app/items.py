@@ -2,7 +2,7 @@ from flask import Blueprint, request, jsonify
 from database import User,Item, db
 from auth.require_token import token_required
 from base64 import urlsafe_b64decode, b64encode, decode
-from main import app
+from app import app
 from os import remove
 from geopy.distance import geodesic
 from data_url import construct_data_url, DataURL
@@ -26,17 +26,21 @@ def items_dash():
         })
     return jsonify({"all_items": item_data}), 200
 
-# add auth before this
+
 @items_bp.route('/claim/<int:item_id>', methods=['POST'])
-def claim_item(item_id):
+@token_required
+def claim_item(user: User,item_id):
     item = Item.query.get(item_id)
-    
+    userCoords = request.json["user_coords"]
     if not item:
         return jsonify({"error":"Item does not exist"}), 400
     
     if item.claimed:
         return jsonify({"error":"Item already claimed"}), 400
-
+    item_coord = tuple(map(float, item.coordinates.replace("(", "").replace(")", "").replace(" ", "").split(',')))
+    user_coord = tuple(map(float, userCoords.replace("(", "").replace(")", "").replace(" ", "").split(',')))
+    if geodesic(user_coord, item_coord).meters > 500:
+        return jsonify({"error":"Item is too far away"}), 400
     item.claimed = True
     item.user_id = user.id
     db.session.commit()
@@ -55,7 +59,7 @@ def serve_img():
 #Retrive all my items
 @items_bp.route('/my')
 @token_required
-def items_dash(user: User):
+def my_items(user: User):
     try:
         #The returned items will be in a list by default
         items = Item.query.filter_by(user_id=user.id).all()
@@ -190,32 +194,35 @@ def itemToDict(item: Item):
 @items_bp.route('/filter')
 @token_required
 def filter_items(user: User):
-    #Gets the user coordinates from a tuple string in the db passed by the token_required decorator
-    user_coord = tuple(map(float, user.coordinates.replace("(", "").replace(")", "").replace(" ", "").split(',')))
-    #Gets the user max_distance from the db passed by the token_required decorator
-    user_max_distance = user.max_distance
-    with_images = request.args.get('with_images')
-    acceptableItems = []
-    for item in Item.query.all():
-        #Calculates the distance between the user and the item using geodesic function from geopy library
-        #If the distance is less than the user max_distance, then append the item to the list of acceptable items
-        #If the distance is greater than the user max_distance, then skip the item and continue to the next item
-        item_coord = tuple(map(float, item.coordinates.replace("(", "").replace(")", "").replace(" ", "").split(',')))
-        if geodesic(user_coord, item_coord).km <= user_max_distance:
-            acceptableItems.append(itemToDict(item))
-        if with_images:
-            for item in acceptableItems:
-                with open(item["img_path"], "rb") as f:
-                    mime_type = ""
-                    if item["img_path"].endswith(".jpg"):
-                        mime_type = "image/jpeg"
-                    else:
-                        mime_type = "image/png"
-                    dURL = construct_data_url(
-                        data=f.read(),
-                        base64_encode=True,
-                        mime_type=mime_type
-                    )
-                    item["img"] = dURL
-        
-    return jsonify({"items":acceptableItems}), 200
+    try:
+        #Gets the user coordinates from a tuple string in the db passed by the token_required decorator
+        user_coord = tuple(map(float, user.coordinates.replace("(", "").replace(")", "").replace(" ", "").split(',')))
+        #Gets the user max_distance from the db passed by the token_required decorator
+        user_max_distance = user.max_distance
+        with_images = request.args.get('with_images')
+        acceptableItems = []
+        for item in Item.query.filter_by(claimed=False).all():
+            #Calculates the distance between the user and the item using geodesic function from geopy library
+            #If the distance is less than the user max_distance, then append the item to the list of acceptable items
+            #If the distance is greater than the user max_distance, then skip the item and continue to the next item
+            item_coord = tuple(map(float, item.coordinates.replace("(", "").replace(")", "").replace(" ", "").split(',')))
+            if geodesic(user_coord, item_coord).km <= user_max_distance:
+                acceptableItems.append(itemToDict(item))
+            if with_images:
+                for item in acceptableItems:
+                    with open(item["img_path"], "rb") as f:
+                        mime_type = ""
+                        if item["img_path"].endswith(".jpg"):
+                            mime_type = "image/jpeg"
+                        else:
+                            mime_type = "image/png"
+                        dURL = construct_data_url(
+                            data=f.read(),
+                            base64_encode=True,
+                            mime_type=mime_type
+                        )
+                        item["img"] = dURL
+            
+        return jsonify({"items":acceptableItems}), 200
+    except Exception as e:
+        return jsonify({"message":"Something went wrong" + str(e)}), 500

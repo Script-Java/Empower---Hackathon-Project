@@ -14,6 +14,7 @@ import {
 } from "@chakra-ui/react";
 import { Link } from "react-router-dom";
 import { BiMenuAltLeft } from "react-icons/bi";
+import pdf from "./../../assets/Empower_Business_Plan.pdf"
 export const SideBarNotLoggedIn = (isOpen, onOpen, onClose) => {
 //   const { isOpen, onOpen, onClose } = useDisclosure();
   return (
@@ -41,12 +42,16 @@ export const SideBarNotLoggedIn = (isOpen, onOpen, onClose) => {
           </DrawerHeader>
           <DrawerBody>
             <VStack alignItems={"flex-start"}>
-              <Button onClick={onClose} variant={"ghost"} colorScheme="green">
-                <Link to="/">Home</Link>
-              </Button>
-              <Button onClick={onClose} variant={"ghost"} colorScheme="green">
-                <Link to="/about">About</Link>
-              </Button>
+            <Link to="/">
+                <Button onClick={onClose} variant={"ghost"} colorScheme="green">
+                  Home
+                </Button>
+              </Link>
+              <Link to={pdf} target="_blank">
+                <Button onClick={onClose} variant={"ghost"} colorScheme="green">
+                  About
+                </Button>
+              </Link>
             </VStack>
             <HStack
               pos={"absolute"}
@@ -55,12 +60,16 @@ export const SideBarNotLoggedIn = (isOpen, onOpen, onClose) => {
               w={"full"}
               justifyContent={"space-evenly"}
             >
-              <Button onClick={onClose} colorScheme="green">
-                <Link to={"/login"}>Login</Link>
-              </Button>
-              <Button onClick={onClose} colorScheme="green" variant={"outline"}>
-                <Link to={"/signup"}>Sign Up</Link>
-              </Button>
+              <Link to={"/login"}>
+                <Button onClick={onClose} colorScheme="green">
+                  Login
+                </Button>
+              </Link>
+              <Link to={"/signup"}>
+                <Button onClick={onClose} colorScheme="green" variant={"outline"}>
+                  Sign Up
+                </Button>
+              </Link>
             </HStack>
           </DrawerBody>
         </DrawerContent>

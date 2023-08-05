@@ -3,7 +3,7 @@ import jwt
 from flask import request
 from datetime import datetime
 from database import User
-from main import app
+from app import app
 from flask_headers import headers
 
 #This is to be used as a function decorator on resources locked for authentication

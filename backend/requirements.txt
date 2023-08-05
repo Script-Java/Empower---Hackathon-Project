@@ -5,3 +5,4 @@ pyjwt
 flask-cors
 flask-headers
 data-url
+gunicorn
