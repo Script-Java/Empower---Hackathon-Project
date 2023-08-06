@@ -1,2 +1,17 @@
-# Empower---Hackathon-Project
-### THIS IS THE DEVELOPMENT BRANCH
+# Empower
+## Inspiration
+
+## Inspiration
+We were inspired by sites like [Craigslist ](https://www.craigslist.org/about/sites) or the Swedish site [Blocket](https://www.blocket.se/). We also took inspiration from second-hand stores. A team member worked in a recycling center and saw how many perfectly usable products get thrown in the trash because the original owner had no use for them anymore. This inspired us to create a new site that is focused on streamlining the giving process to promote a circular economy and a stronger community.
+## What it does
+The website allows users to specify the max range they are willing to travel to pick up a product. After the account is created they can see new products as they pop up within the max distance and get a location for the product. Users can also create new items and their location is automatically added to the item. When a user comes within a certain range of the item, they can chose to claim it, which will remove it from other peoples dashboard. The great thing about the platform is its peer to peer distribution. The platform only facilitates the interaction that takes place between the giver and the receiver. This face-to-face aspect of giving is often lost in the typical charities or thrift stores. 
+## How we built it
+We used [flask](https://flask.palletsprojects.com/en/2.3.x/) for the backend, mostly due to the teams familiarity with it. The ORM we settled on was [SQLAlchemy](https://www.sqlalchemy.org/), more specifically a flask integration with it called [Flask SQLAlchemy](https://flask-sqlalchemy.palletsprojects.com/en/3.0.x/). This choice was also mostly down to prior experience. For hosting we used [Heroku](https://www.heroku.com/), the server we used is a UNIX WSGI server called [Gunicorn](https://gunicorn.org/). We also used [Docker](https://www.docker.com/) to make sharing our progress easier. The code resides in a [Monorepo](https://github.com/Script-Java/Empower---Hackathon-Project/tree/development) on [GitHub](https://github.com/). On the frontend we used [React](https://react.dev/) with [Chakra UI](https://chakra-ui.com/) to make development faster. We used [Vite](https://vitejs.dev/) for the project builds. We also used [Geocode](https://geocode.maps.co/) for reverse address searching from coordinates. The server for the frontend was [Nginx](https://www.nginx.com/).
+## Challenges we ran into
+Since none of the team members were highly experienced we found development to be quite slow which was problematic because of the short deadline. Since it was a relatively large team of five people, we had some conflicting opinions in several matters, but we managed to overcome those issues and build an amazing and hopefully inspirational product. 
+## Accomplishments that we're proud of
+Due to the short time frame we had to move fast in all aspects of the hackathon, both development and business. To make everything happen we sometimes had to put aside our personal opinions and compromise, which resulted in a better end product. We are also proud of ourselves for delivering a finished product. It was not easy nor stress-free, but we pulled through in the end. 
+## What we learned
+We learned a lot from this hackathon, from video creation and script writing to docker and flask to PDF formatting and business language. But the most important thing we learned was cooperation and the value of compromising. 
+## What's next for Empower
+Empower might see continued development, but we think it might just stay a hackathon project for now. The team members are all attending school and are therefor quite busy. The heckathon was very fun and a great learning experience for our team!
