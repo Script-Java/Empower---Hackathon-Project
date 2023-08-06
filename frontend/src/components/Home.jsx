@@ -49,7 +49,8 @@ const Home = () => {
           padding={"1rem"}
           textAlign={"center"}
         >
-           Connecting Kindness, Sharing Hope
+           Sharing smiles, Brightening lives
+
         </Text>
         <Text 
           // marginTop={"3rem"}
